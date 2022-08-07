@@ -1,0 +1,90 @@
+﻿@using System.Web.Helpers;
+@model IQueryable<Point>
+
+<h1>Points:</h1>
+
+<script src="https://unpkg.com/konva@8/konva.min.js">
+
+</script>
+    
+    <div id="container"></div>
+
+    <script>
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+        var stage = new Konva.Stage({
+        container: 'container',
+        width: width,
+        height: height,
+        });
+
+        var layer = new Konva.Layer();
+
+    </script>
+
+    @foreach (var item in Model)
+    {
+        <script>
+
+        var circle = new Konva.Circle({
+        x: @item.CoordinateX,
+        y: @item.CoordinateY,
+        radius: @item.Radius,
+        fill: '@item.Color',
+        id: '@item.Id',
+        });
+      
+        circle.on('dblclick', function () {
+        this.destroy();
+        });
+
+        layer.add(circle);
+        stage.add(layer);
+        </script> 
+
+   @foreach (var onePoint in Model)
+   {
+       if (onePoint != null)
+       {
+           <script>
+           var offset = @onePoint.Radius *2 ;
+           </script>
+
+          @foreach (var comment in onePoint.Comments)
+            {
+            <script>
+            var text = new Konva.Text({
+            x: @onePoint.CoordinateX / 2,
+            y: @onePoint.CoordinateY + offset,
+            text: '@comment.Text',
+            fontSize: 20,
+            fontFamily: 'Calibri',
+            fill: 'green',
+            align: 'center',
+            });
+          
+            var rect = new Konva.Rect({
+            x: @onePoint.CoordinateX / 2,
+            y: @onePoint.CoordinateY + offset,
+            fill: '@comment.BackgroundColor',
+            width: text.width() + 3,
+            height: text.height() + 3,
+            opacity: 0.2,
+            stroke: '#555',
+            strokeWidth: 2,
+            });
+
+            offset = offset + 35;
+
+            layer.add(rect);
+            layer.add(text);
+      
+            stage.add(layer);
+            </script>
+            }
+       }
+   }
+}
+
+
+
